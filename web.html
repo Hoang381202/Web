@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cà Phê Hoàng Hôn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5efe6;
+      --warm-white: #faf7f2;
+      --brown-dark: #1a0f08;
+      --brown-mid: #3d2010;
+      --brown-accent: #7a3e1e;
+      --gold: #c8922a;
+      --gold-light: #e8b96a;
+      --text-muted: #8c7060;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--brown-dark);
+      color: var(--cream);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 5%;
+      background: linear-gradient(to bottom, rgba(26,15,8,0.95) 0%, transparent 100%);
+      transition: background 0.3s;
+    }
+    nav.scrolled { background: rgba(26,15,8,0.97); border-bottom: 1px solid rgba(200,146,42,0.15); }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { font-style: italic; color: var(--cream); }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--cream); font-size: 0.875rem;
+      font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      opacity: 0.8; transition: opacity 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--gold-light); }
+
+    .nav-cta {
+      background: var(--gold); color: var(--brown-dark);
+      border: none; padding: 0.6rem 1.4rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer; transition: background 0.2s, transform 0.1s;
+    }
+    .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--cream); transition: 0.3s; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding: 0 5%;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 70% 50%, rgba(122,62,30,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 80%, rgba(200,146,42,0.12) 0%, transparent 60%),
+        linear-gradient(135deg, #0d0603 0%, #1a0f08 50%, #261408 100%);
+    }
+
+    /* decorative circles */
+    .hero-bg::before {
+      content: '';
+      position: absolute; right: -5%; top: 10%;
+      width: 55vw; height: 55vw; max-width: 700px; max-height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(122,62,30,0.25) 0%, transparent 70%);
+      border: 1px solid rgba(200,146,42,0.1);
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute; right: 5%; top: 15%;
+      width: 42vw; height: 42vw; max-width: 540px; max-height: 540px;
+      border-radius: 50%;
+      border: 1px solid rgba(200,146,42,0.15);
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 620px;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(200,146,42,0.12); border: 1px solid rgba(200,146,42,0.3);
+      padding: 0.35rem 0.9rem; border-radius: 2px;
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold-light); margin-bottom: 1.8rem;
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-badge::before { content: '✦'; font-size: 0.6rem; }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 1.05; font-weight: 700;
+      color: var(--warm-white);
+      margin-bottom: 1.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+    }
+    .hero-title em { color: var(--gold); font-style: italic; }
+
+    .hero-desc {
+      font-size: 1.05rem; line-height: 1.7;
+      color: var(--text-muted); max-width: 460px;
+      margin-bottom: 2.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+    }
+
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .btn-primary {
+      background: var(--gold); color: var(--brown-dark);
+      border: none; padding: 0.9rem 2.2rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      font-size: 0.9rem; letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.25s; text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,146,42,0.3); }
+
+    .btn-outline {
+      background: transparent; color: var(--cream);
+      border: 1px solid rgba(245,239,230,0.3); padding: 0.9rem 2.2rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 400;
+      font-size: 0.9rem; letter-spacing: 0.06em;
+      cursor: pointer; transition: all 0.25s; text-decoration: none;
+      display: inline-block;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    .hero-stats {
+      position: absolute; right: 5%; bottom: 12%; z-index: 2;
+      display: flex; flex-direction: column; gap: 1.5rem;
+      opacity: 0; animation: fadeLeft 0.9s 1s forwards;
+    }
+    .stat { text-align: right; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; color: var(--gold); line-height: 1;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.2rem; }
+
+    /* ── MARQUEE ── */
+    .marquee-section {
+      border-top: 1px solid rgba(200,146,42,0.15);
+      border-bottom: 1px solid rgba(200,146,42,0.15);
+      padding: 1rem 0; overflow: hidden;
+      background: rgba(200,146,42,0.04);
+    }
+    .marquee-track {
+      display: flex; gap: 3rem; width: max-content;
+      animation: marquee 20s linear infinite;
+    }
+    .marquee-item {
+      display: flex; align-items: center; gap: 1rem;
+      font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted); white-space: nowrap;
+    }
+    .marquee-item span { color: var(--gold); font-size: 0.7rem; }
+
+    /* ── ABOUT ── */
+    #about {
+      padding: 7rem 5%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+
+    .about-visual {
+      position: relative;
+    }
+    .about-img-frame {
+      width: 100%; aspect-ratio: 4/5;
+      background: linear-gradient(135deg, var(--brown-mid), var(--brown-accent));
+      position: relative; overflow: hidden;
+    }
+    .about-img-frame::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(200,146,42,0.2) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8922a' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .about-img-frame .cup-icon {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      font-size: 6rem; opacity: 0.15;
+    }
+    .about-badge-float {
+      position: absolute; bottom: -1.5rem; right: -1.5rem;
+      background: var(--gold); color: var(--brown-dark);
+      width: 110px; height: 110px; border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+    }
+    .about-badge-float strong { font-size: 1.8rem; line-height: 1; }
+    .about-badge-float small { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .about-line {
+      width: 40px; height: 2px; background: var(--gold); margin-bottom: 1.2rem;
+    }
+    .about-tag {
+      font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1rem;
+    }
+    .about-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      line-height: 1.2; margin-bottom: 1.5rem;
+      color: var(--warm-white);
+    }
+    .about-heading em { color: var(--gold); font-style: italic; }
+    .about-text { color: var(--text-muted); line-height: 1.8; margin-bottom: 1rem; font-size: 0.97rem; }
+
+    .about-features { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .feature-row { display: flex; align-items: center; gap: 0.75rem; }
+    .feature-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    .feature-row span { font-size: 0.9rem; color: var(--cream); opacity: 0.85; }
+
+    /* ── MENU ── */
+    #menu {
+      padding: 7rem 5%;
+      background: linear-gradient(to bottom, var(--brown-dark), #110a05, var(--brown-dark));
+    }
+
+    .section-header { text-align: center; margin-bottom: 4rem; }
+    .section-tag {
+      font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      color: var(--warm-white); line-height: 1.2;
+    }
+    .section-title em { color: var(--gold); font-style: italic; }
+    .section-divider {
+      width: 50px; height: 1px; background: var(--gold);
+      margin: 1.2rem auto 0; opacity: 0.6;
+    }
+
+    .menu-tabs {
+      display: flex; justify-content: center; gap: 0.5rem;
+      margin-bottom: 3rem; flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: transparent; border: 1px solid rgba(200,146,42,0.25);
+      color: var(--text-muted); padding: 0.55rem 1.5rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+      letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--gold); color: var(--brown-dark);
+      border-color: var(--gold);
+    }
+
+    .menu-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .menu-grid.hidden { display: none; }
+
+    .menu-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(200,146,42,0.1);
+      padding: 1.8rem; transition: all 0.25s; cursor: default;
+      position: relative; overflow: hidden;
+    }
+    .menu-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .menu-card:hover { background: rgba(200,146,42,0.07); transform: translateY(-3px); }
+    .menu-card:hover::before { opacity: 1; }
+
+    .card-emoji { font-size: 1.8rem; margin-bottom: 1rem; }
+    .card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; color: var(--warm-white); margin-bottom: 0.4rem;
+    }
+    .card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.2rem; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .card-price { font-size: 1.1rem; color: var(--gold); font-weight: 500; }
+    .card-tag {
+      font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted); border: 1px solid rgba(140,112,96,0.3);
+      padding: 0.2rem 0.6rem;
+    }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials { padding: 7rem 5%; }
+
+    .testimonial-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .testimonial-card {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(200,146,42,0.1);
+      padding: 2rem; transition: border-color 0.25s;
+    }
+    .testimonial-card:hover { border-color: rgba(200,146,42,0.3); }
+    .stars { color: var(--gold); font-size: 0.85rem; margin-bottom: 1rem; letter-spacing: 0.1em; }
+    .testimonial-text {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      color: var(--cream); line-height: 1.7; margin-bottom: 1.5rem; font-size: 1rem;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
+    .author-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--brown-accent), var(--gold));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 600; color: var(--brown-dark);
+    }
+    .author-info strong { font-size: 0.9rem; color: var(--cream); display: block; }
+    .author-info small { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* ── VISIT ── */
+    #visit {
+      padding: 7rem 5%;
+      background: rgba(200,146,42,0.04);
+      border-top: 1px solid rgba(200,146,42,0.1);
+      border-bottom: 1px solid rgba(200,146,42,0.1);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start;
+    }
+
+    .info-block { margin-bottom: 2rem; }
+    .info-label {
+      font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.5rem;
+    }
+    .info-value { font-size: 0.97rem; color: var(--cream); line-height: 1.7; }
+
+    .map-placeholder {
+      width: 100%; aspect-ratio: 4/3;
+      background: linear-gradient(135deg, #1a0f08, #2e1810);
+      border: 1px solid rgba(200,146,42,0.15);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.75rem; color: var(--text-muted);
+    }
+    .map-placeholder span { font-size: 2.5rem; }
+    .map-placeholder p { font-size: 0.85rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 5%; text-align: center;
+      border-top: 1px solid rgba(200,146,42,0.1);
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; color: var(--gold); margin-bottom: 1rem;
+    }
+    .footer-logo span { font-style: italic; color: var(--cream); }
+    .footer-links { display: flex; justify-content: center; gap: 2rem; list-style: none; margin-bottom: 2rem; flex-wrap: wrap; }
+    .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeLeft {
+      from { opacity: 0; transform: translateX(28px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .hamburger { display: flex; }
+
+      .nav-links.open {
+        display: flex; flex-direction: column;
+        position: fixed; top: 64px; left: 0; right: 0;
+        background: rgba(26,15,8,0.98); padding: 2rem 5%;
+        gap: 1.5rem;
+      }
+
+      #about { grid-template-columns: 1fr; gap: 3rem; }
+      .about-visual { max-width: 380px; margin: 0 auto; }
+      #visit { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-stats { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Cà Phê <span>Hoàng Hôn</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">Về chúng tôi</a></li>
+    <li><a href="#menu">Thực đơn</a></li>
+    <li><a href="#testimonials">Đánh giá</a></li>
+    <li><a href="#visit">Ghé thăm</a></li>
+  </ul>
+  <button class="nav-cta">Đặt bàn</button>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Thành lập từ 2018 · Đà Nẵng</div>
+    <h1 class="hero-title">Nơi thời gian<br>chậm lại<br>cùng <em>cà phê</em></h1>
+    <p class="hero-desc">Mỗi tách cà phê là một câu chuyện — về hạt, về người, về khoảnh khắc. Chúng tôi ủ từng giọt với sự tận tâm và trái tim.</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary">Xem thực đơn</a>
+      <a href="#visit" class="btn-outline">Tìm chúng tôi</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">12+</div>
+      <div class="stat-label">Loại cà phê</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4.9★</div>
+      <div class="stat-label">Đánh giá</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">6 năm</div>
+      <div class="stat-label">Kinh nghiệm</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item"><span>✦</span> Espresso thượng hạng</div>
+    <div class="marquee-item"><span>✦</span> Cold Brew 24 giờ</div>
+    <div class="marquee-item"><span>✦</span> Bánh ngọt tươi mỗi ngày</div>
+    <div class="marquee-item"><span>✦</span> Không gian yên tĩnh</div>
+    <div class="marquee-item"><span>✦</span> WiFi miễn phí</div>
+    <div class="marquee-item"><span>✦</span> Hạt Arabica từ Cầu Đất</div>
+    <div class="marquee-item"><span>✦</span> Espresso thượng hạng</div>
+    <div class="marquee-item"><span>✦</span> Cold Brew 24 giờ</div>
+    <div class="marquee-item"><span>✦</span> Bánh ngọt tươi mỗi ngày</div>
+    <div class="marquee-item"><span>✦</span> Không gian yên tĩnh</div>
+    <div class="marquee-item"><span>✦</span> WiFi miễn phí</div>
+    <div class="marquee-item"><span>✦</span> Hạt Arabica từ Cầu Đất</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-visual reveal">
+    <div class="about-img-frame">
+      <div class="cup-icon">☕</div>
+    </div>
+    <div class="about-badge-float">
+      <strong>100%</strong>
+      <small>Arabica<br>thuần chủng</small>
+    </div>
+  </div>
+  <div class="about-content reveal">
+    <div class="about-line"></div>
+    <div class="about-tag">Câu chuyện của chúng tôi</div>
+    <h2 class="about-heading">Đam mê không bao giờ<br><em>nguội lạnh</em></h2>
+    <p class="about-text">Được thành lập năm 2018 bởi hai người bạn mang trong mình tình yêu với cà phê Việt, Hoàng Hôn ra đời như một lời hứa: mang đến ly cà phê chất lượng nhất, trong không gian ấm áp nhất.</p>
+    <p class="about-text">Chúng tôi thu mua trực tiếp từ các nông trại tại Cầu Đất, Đà Lạt — nơi có độ cao và khí hậu lý tưởng cho hạt Arabica phát triển.</p>
+    <div class="about-features">
+      <div class="feature-row"><div class="feature-dot"></div><span>Rang thủ công theo phương pháp slow roast</span></div>
+      <div class="feature-row"><div class="feature-dot"></div><span>Pha chế bởi barista được đào tạo chuyên nghiệp</span></div>
+      <div class="feature-row"><div class="feature-dot"></div><sp
